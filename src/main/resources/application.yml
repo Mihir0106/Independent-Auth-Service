@@ -7,11 +7,11 @@ spring :
     password:
     url: jdbc:postgresql://localhost:5432/registration
     username:
-jpa:
-  hibernate:
-    ddl-auto: create-drop
-  properties:
+  jpa:
     hibernate:
-      dialect: org.hibernate.dialect.PostgreSQLDialect
-      format_sql: true
-  show-sql: true
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
