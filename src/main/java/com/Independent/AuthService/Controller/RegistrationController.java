@@ -2,7 +2,10 @@ package com.Independent.AuthService.Controller;
 
 import com.Independent.AuthService.Model.User;
 import com.Independent.AuthService.Repository.UserRepository;
+import com.Independent.AuthService.Service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,9 +20,36 @@ public class RegistrationController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private EmailService emailService;
+
     @PostMapping(value = "req/signup", consumes = "application/json")
-    public User CreateUser(@RequestBody User user){
+    public ResponseEntity<String> createUser(@RequestBody User user){
+
+        User existingUser = userRepository.findByEmail(user.getEmail());
+
+        if (existingUser != null) {
+            if(existingUser.isVerified()){
+                return new ResponseEntity<>("User Already Exist and Verified", HttpStatus.BAD_REQUEST);
+            }
+            else{
+                String verificationToken = "123456";
+                existingUser.setVerificationToken(verificationToken);
+                userRepository.save(existingUser);
+                // Send Email Code
+                emailService.sendVerificationEmail(existingUser.getEmail(),verificationToken);
+                return new ResponseEntity<>("Verification Mail resent. Please check your email",HttpStatus.OK);
+            }
+        }
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        String verificationToken = "123456";
+        user.setVerificationToken(verificationToken);
+        userRepository.save(user);
+        emailService.sendVerificationEmail(user.getEmail(),verificationToken);
+
+        return new ResponseEntity<>("Registration Successful, Please Verify your Email", HttpStatus.OK);
+
+
     }
 }

@@ -3,6 +3,18 @@ server :
     include-message : always
     include-binding-errors : always
 spring :
+  mail:
+    host: smtp.gmail.com
+    post: 587
+    username: email@gmail.com
+    password: blablabla
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   datasource:
     password:
     url: jdbc:postgresql://localhost:5432/registration

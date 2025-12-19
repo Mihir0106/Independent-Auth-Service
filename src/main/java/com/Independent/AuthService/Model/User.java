@@ -1,9 +1,6 @@
 package com.Independent.AuthService.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 @jakarta.persistence.Table(name = "users")
@@ -15,6 +12,11 @@ public class User {
     private String username;
     private String email;
     private String password;
+    private String verificationToken;
+    private boolean isVerified;
+
+    @Column(name = "reset_token")
+    private String resetToken;
 
     public Long getUserId() {
         return userId;
@@ -46,5 +48,29 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getVerificationToken() {
+        return verificationToken;
+    }
+
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean isVerified) {
+        this.isVerified = isVerified;
+    }
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
     }
 }
