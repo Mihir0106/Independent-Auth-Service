@@ -40,9 +40,6 @@ public class SecurityConfig {
         return  new BCryptPasswordEncoder();
     }
 
-
-
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         return httpSecurity
@@ -52,7 +49,7 @@ public class SecurityConfig {
                     httpForm.defaultSuccessUrl("/index");
                 })
                 .authorizeHttpRequests(registry ->{
-                    registry.requestMatchers("/req/**", "/css/**" , "/js/**").permitAll();
+                    registry.requestMatchers("/req/**", "/css/**" , "/js/**","/error").permitAll();
                     registry.anyRequest().authenticated();
                 })
                 .build();

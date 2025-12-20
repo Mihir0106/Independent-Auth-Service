@@ -27,10 +27,26 @@ public class UserService implements UserDetailsService {
                     .username(userObj.getUsername())
                     .password(userObj.getPassword())
                     .roles("USER")
+                    .disabled(!userObj.isVerified())
                     .build();
         } else {
             throw new UsernameNotFoundException(username);
         }
-
     }
+
+    public boolean verifyUser(String token){
+        Optional<User> userOptional = repository.findByVerificationToken(token);
+
+        if(userOptional.isPresent()){
+            User user = userOptional.get();
+            user.setVerified(true);
+            user.setVerificationToken(null); // clear the token
+            repository.save(user);
+            return true;
+        }
+
+        return  false;
+    }
+
+
 }
