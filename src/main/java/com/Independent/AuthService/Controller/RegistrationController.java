@@ -3,6 +3,7 @@ package com.Independent.AuthService.Controller;
 import com.Independent.AuthService.Model.User;
 import com.Independent.AuthService.Repository.UserRepository;
 import com.Independent.AuthService.Service.EmailService;
+import com.Independent.AuthService.Utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class RegistrationController {
     @Autowired
     private EmailService emailService;
 
+
     @PostMapping(value = "req/signup", consumes = "application/json")
     public ResponseEntity<String> createUser(@RequestBody User user){
 
@@ -33,7 +35,7 @@ public class RegistrationController {
                 return new ResponseEntity<>("User Already Exist and Verified", HttpStatus.BAD_REQUEST);
             }
             else{
-                String verificationToken = "123456";
+                String verificationToken = JwtTokenUtil.generateToken(existingUser.getEmail());
                 existingUser.setVerificationToken(verificationToken);
                 userRepository.save(existingUser);
                 // Send Email Code
@@ -43,7 +45,7 @@ public class RegistrationController {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        String verificationToken = "123456";
+        String verificationToken = JwtTokenUtil.generateToken(user.getEmail());
         user.setVerificationToken(verificationToken);
         userRepository.save(user);
         emailService.sendVerificationEmail(user.getEmail(),verificationToken);
