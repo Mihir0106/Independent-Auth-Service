@@ -4,10 +4,12 @@ import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 
+@Component
 public class JwtTokenUtil {
 
     private final static SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
@@ -31,7 +33,7 @@ public class JwtTokenUtil {
                 .setSigningKey(SECRET_KEY)
                 .build();
 
-        return jwtParser.parseClaimsJwt(token)
+        return jwtParser.parseClaimsJws(token)
                 .getBody()
                 .getSubject();
     }
@@ -44,7 +46,7 @@ public class JwtTokenUtil {
         JwtParser jwtParser = Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY)
                 .build();
-        return jwtParser.parseClaimsJwt(token)
+        return jwtParser.parseClaimsJws(token)
                 .getBody()
                 .getExpiration();
     }
