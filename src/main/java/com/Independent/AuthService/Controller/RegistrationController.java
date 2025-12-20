@@ -1,5 +1,6 @@
 package com.Independent.AuthService.Controller;
 
+import com.Independent.AuthService.DTO.AuthResponse;
 import com.Independent.AuthService.Model.User;
 import com.Independent.AuthService.Repository.UserRepository;
 import com.Independent.AuthService.Service.EmailService;
@@ -26,7 +27,7 @@ public class RegistrationController {
 
 
     @PostMapping(value = "req/signup", consumes = "application/json")
-    public ResponseEntity<String> createUser(@RequestBody User user){
+    public ResponseEntity<?> createUser(@RequestBody User user){
 
         User existingUser = userRepository.findByEmail(user.getEmail());
 
@@ -40,7 +41,9 @@ public class RegistrationController {
                 userRepository.save(existingUser);
                 // Send Email Code
                 emailService.sendVerificationEmail(existingUser.getEmail(),verificationToken);
-                return new ResponseEntity<>("Verification Mail resent. Please check your email",HttpStatus.OK);
+
+                // Return a sanitized response, NOT the user object
+                return ResponseEntity.ok(new AuthResponse(null, "User Registration Successfully"));
             }
         }
 

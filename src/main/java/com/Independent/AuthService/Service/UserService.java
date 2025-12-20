@@ -3,6 +3,7 @@ package com.Independent.AuthService.Service;
 import com.Independent.AuthService.Model.User;
 import com.Independent.AuthService.Repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.security.autoconfigure.SecurityProperties;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,20 +18,19 @@ public class UserService implements UserDetailsService {
     UserRepository repository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        Optional<User> user = repository.findByUsername(username);
+        User user = repository.findByEmail(email);
 
-        if (user.isPresent()) {
-            var userObj = user.get();
+        if(user != null){
             return org.springframework.security.core.userdetails.User.builder()
-                    .username(userObj.getUsername())
-                    .password(userObj.getPassword())
+                    .username(user.getEmail())
+                    .password(user.getPassword())
                     .roles("USER")
-                    .disabled(!userObj.isVerified())
+                    //.disabled(!user.isVerified())
                     .build();
-        } else {
-            throw new UsernameNotFoundException(username);
+        }else{
+            throw new UsernameNotFoundException("User name not found with email : " + email);
         }
     }
 
